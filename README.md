@@ -1,7 +1,7 @@
 # Описание
 
 Для выполнения двух скриптов должны быть установлены переменные среды
-- `DB_DATA_SOURCE` - формат дял DBD::Pg, например, `dbname=maillog;port=3386`
+- `DB_DATA_SOURCE` - формат для DBD::Pg, например, `dbname=maillog;port=3386`
 - `DB_PASSWORD`
 - `DB_USERNAME`
 
