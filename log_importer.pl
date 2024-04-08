@@ -25,7 +25,7 @@ $parser->on_incoming_message( sub {
 	# Т.к. id обязателен в таблице, пропускаю входящие сообщения без него
 	# (не знаю, что с ними делать)
 	return if $params{id} eq '';
-	eval { $repository->add_message(@_) };
+	eval { $repository->add_message(%params) };
 });
 
 open my $fh, '<', $log_file or die "Can not read log file: $!";
