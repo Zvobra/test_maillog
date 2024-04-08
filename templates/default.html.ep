@@ -14,9 +14,9 @@
 <body>
 <form id="find_by_address" onsubmit="return show_logs_for_address();">
 	<div class="input-group mb-3">
-		<input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username"
+		<input type="text" class="form-control" placeholder="Адрес" aria-label="Адрес"
 					 aria-describedby="button-addon2" id="input_address">
-		<button class="btn btn-outline-secondary" type="submit" id="find_by_address_submit">Button</button>
+		<button class="btn btn-outline-secondary" type="submit" id="find_by_address_submit">Найти</button>
 	</div>
 </form>
 <div class="alert alert-danger" role="alert" style="display: none" id="find_by_address_alert">
