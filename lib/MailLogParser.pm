@@ -66,7 +66,7 @@ sub read_log {
 sub _parse_raw_log {
 	my ( undef, $log ) = @_;
 
-	my ( $date, $time, $int_id, $flag, $body ) = split ' ', $log, 5;
+	my ( $date, $time, $int_id, $flag, $body ) = ( split( ' ', $log, 5 ), ('') x 5 );
 
 	unless ( exists $MESSAGE_FLAGS_MAP->{ $flag } ) {
 		$body = join ' ', map { $_ || () } ( $flag, $body );
