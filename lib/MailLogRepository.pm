@@ -25,8 +25,8 @@ sub add_log {
 	my ( $self, %params ) = @_;
 
 	my $created = $params{created} or die 'created is not provided';
-	my $int_id  = $params{int_id}  or die 'int_id is not provided';
-	my $str     = $params{str}     or die 'str is not provided';
+	my $int_id  = $params{int_id}  || '';
+	my $str     = $params{str}     || '';
 	my $address = $params{address} || '';
 
 	my $t = TABLE_LOG;
@@ -46,9 +46,9 @@ sub add_message {
 	my ( $self, %params ) = @_;
 
 	my $created = $params{created} or die 'created is not provided';
-	my $int_id  = $params{int_id}  or die 'int_id is not provided';
-	my $str     = $params{str}     or die 'str is not provided';
-	my $id      = $params{id} || '';
+	my $id      = $params{id}      or die 'id is not provided';
+	my $int_id  = $params{int_id}  || '';
+	my $str     = $params{str}     || '';
 
 	my $t = TABLE_MESSAGE;
 
