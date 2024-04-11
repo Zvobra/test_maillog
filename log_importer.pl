@@ -19,13 +19,19 @@ my $dbh = PgDbConnection->create;
 my $repository = MailLogRepository->new($dbh);
 
 my $parser = MailLogParser->new();
-$parser->on_log( sub { eval { $repository->add_log(@_) } } );
+$parser->on_log( sub {
+	my $result = eval { $repository->add_log(@_) };
+	warn $@ if $@;
+	return $result;
+});
 $parser->on_incoming_message( sub {
 	my %params = @_;
 	# Т.к. id обязателен в таблице, пропускаю входящие сообщения без него
 	# (не знаю, что с ними делать)
 	return if $params{id} eq '';
-	eval { $repository->add_message(%params) };
+	my $result = eval { $repository->add_message(%params) };
+	warn $@ if $@;
+	return $result;
 });
 
 open my $fh, '<', $log_file or die "Can not read log file: $!";

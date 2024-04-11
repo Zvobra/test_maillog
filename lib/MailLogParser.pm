@@ -13,7 +13,7 @@ Readonly::Scalar my $MESSAGE_FLAGS => {
 	OUTGOING_DELAYED       => '==',
 };
 
-Readonly::Scalar my $MESSAGE_FLAGS_MAP => { map { +$MESSAGE_FLAGS->{$_} => $_ } keys %$MESSAGE_FLAGS };
+Readonly::Scalar my $MESSAGE_FLAGS_RE => join '|', map { quotemeta $_ } values %$MESSAGE_FLAGS;
 
 sub new {
 	my ( $class ) = @_;
@@ -66,20 +66,25 @@ sub read_log {
 sub _parse_raw_log {
 	my ( undef, $log ) = @_;
 
-	my ( $date, $time, $int_id, $flag, $body ) = ( split( ' ', $log, 5 ), ('') x 5 );
+	return unless $log =~ m{
+		^
+		\s* (?<date> \d{4}-\d{2}-\d{2} )
+		\s+ (?<time> \d{2}:\d{2}:\d{2} )
+		(?: \s+ (?<int_id> [[:alnum:]]{6}-[[:alnum:]]{6}-[[:alnum:]]{2} ) )?
+		(?: \s+ (?<flag> $MESSAGE_FLAGS_RE ) )?
+		(?: \s+ (?<body> .* ) )?
+		$
+	}x;
 
-	unless ( exists $MESSAGE_FLAGS_MAP->{ $flag } ) {
-		$body = join ' ', map { $_ || () } ( $flag, $body );
-		$flag = '';
-	}
+	my %log_entry = map { +$_ => $+{ $_ } || '' } (
+		'int_id',
+		'flag',
+		'body',
+	);
 
-	return {
-		timestamp => join( ' ', $date, $time ),
-		int_id    => $int_id,
-		flag      => $flag,
-		body      => $body,
-		raw       => $log,
-	};
+	$log_entry{timestamp} = join ' ', $+{date}, $+{time};
+
+	return { %log_entry, raw => $log };
 }
 
 sub _parse_incoming_message {
@@ -107,7 +112,8 @@ sub _parse_log {
 
 	my $address = '';
 	if ( $log_entry->{flag} ne '' ) {
-		( $address ) = $log_entry->{body} =~ m/^(?: :blackhole:\s )? [<:]* ( [^>:\s]+ )/x;
+		# Доверяем формату лога и не проверяем корректность адреса
+		( $address ) = $log_entry->{body} =~ m/^(?: :blackhole:\s* )? [<:]* ( [^>:\s]+ )/x;
 		$address ||= '';
 	}
 
